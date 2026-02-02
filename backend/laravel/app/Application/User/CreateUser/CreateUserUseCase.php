@@ -7,6 +7,7 @@ namespace App\Application\User\CreateUser;
 use App\Domain\User\Entity\User;
 use App\Domain\User\Repository\UserRepository;
 use App\Domain\Shared\ValueObject\Email;
+use App\Domain\User\Validation\UserValidationMessage;
 use Ramsey\Uuid\Uuid;
 
 final class CreateUserUseCase
@@ -23,7 +24,7 @@ final class CreateUserUseCase
         $existingUser = $this->userRepository->findByEmail($email->value());
 
         if ($existingUser !== null) {
-            throw new \DomainException('An user with this email already exists.');
+            throw new \DomainException(UserValidationMessage::EMAIL_ALREADY_EXISTS->value);
         }
 
         $user = new User(
