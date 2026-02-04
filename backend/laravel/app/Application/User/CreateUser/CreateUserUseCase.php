@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\User\CreateUser;
 
 use App\Domain\User\Entity\User;
+use App\Domain\User\Exception\UserAlreadyExistsException;
 use App\Domain\User\Repository\UserRepository;
 use App\Domain\Shared\ValueObject\Email;
-use App\Domain\User\Validation\UserValidationMessage;
 use Ramsey\Uuid\Uuid;
 
 final class CreateUserUseCase
@@ -24,7 +24,7 @@ final class CreateUserUseCase
         $existingUser = $this->userRepository->findByEmail($email->value());
 
         if ($existingUser !== null) {
-            throw new \DomainException(UserValidationMessage::EMAIL_ALREADY_EXISTS->value);
+            throw new UserAlreadyExistsException();
         }
 
         $user = new User(

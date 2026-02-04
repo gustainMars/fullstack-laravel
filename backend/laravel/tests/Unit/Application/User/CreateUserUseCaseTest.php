@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Application\User;
 
+use App\Domain\User\Exception\UserAlreadyExistsException;
 use App\Domain\User\Validation\UserValidationMessage;
 use PHPUnit\Framework\TestCase;
 use App\Application\User\CreateUser\CreateUserInput;
@@ -43,7 +44,7 @@ final class CreateUserUseCaseTest extends TestCase
 
         $useCase->execute($input);
         
-        $this->expectException(\DomainException::class);
+        $this->expectException(UserAlreadyExistsException::class);
         $this->expectExceptionMessage(UserValidationMessage::EMAIL_ALREADY_EXISTS->value);
 
         $useCase->execute($input);
