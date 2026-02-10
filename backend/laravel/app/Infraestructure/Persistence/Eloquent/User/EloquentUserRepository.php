@@ -35,4 +35,15 @@ final class EloquentUserRepository implements UserRepository
             new Email($model->email)
         );
     }
+
+    public function all(): array
+    {
+        return UserModel::all()
+            ->map(fn ($model) => new User(
+                id: $model->id,
+                name: $model->name,
+                email: new Email($model->email)
+            ))
+            ->all();
+    }
 }
