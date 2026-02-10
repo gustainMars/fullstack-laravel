@@ -24,17 +24,17 @@ final class CreateUserController
                 email: (string) $request->input('email'),
             );
 
-            $output = $this->useCase->execute($input);
+            $responseDto = $this->useCase->execute($input);
             
-            return response()->json([
-                'id' => $output->id,
-                'name' => $output->name,
-                'email' => $output->email,
-            ], Response::HTTP_CREATED);
+            return response()->json(
+                [ 'data' => $responseDto->toArray()], 
+                Response::HTTP_CREATED
+            );
         } catch (\DomainException $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], Response::HTTP_CONFLICT);
+            return response()->json(
+                ['error' => $e->getMessage()], 
+                Response::HTTP_CONFLICT
+            );
         }
     }
 }

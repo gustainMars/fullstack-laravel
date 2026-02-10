@@ -15,8 +15,10 @@ final class ListUserController
 
     public function __invoke(): JsonResponse
     {
-        return response()->json(
-            $this->handler->handle()
-        );
+        $responseDto = $this->handler->handle();
+
+        return response()->json([
+            'data' => $responseDto->toArray()
+        ]);
     }
 }

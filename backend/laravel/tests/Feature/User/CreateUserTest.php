@@ -20,9 +20,11 @@ class CreateUserTest extends TestCase
         $response
             ->assertStatus(201)
             ->assertJsonStructure([
-                'id',
-                'name',
-                'email',
+                'data' => [
+                    'id',
+                    'name',
+                    'email',
+                ]
             ]);
 
         $this->assertDatabaseHas('users', [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\User\CreateUser;
 
+use App\Application\User\DTO\UserResponseDTO;
 use App\Domain\User\Entity\User;
 use App\Domain\User\Exception\UserAlreadyExistsException;
 use App\Domain\User\Repository\UserRepository;
@@ -17,7 +18,7 @@ final class CreateUserUseCase
     ) {
     }
 
-    public function execute(CreateUserInput $input): CreateUserOutput
+    public function execute(CreateUserInput $input): UserResponseDTO
     {
         $email = new Email($input->email);
 
@@ -35,10 +36,6 @@ final class CreateUserUseCase
 
         $this->userRepository->save($user);
 
-        return new CreateUserOutput(
-            id: $user->id(),
-            name: $user->name(),
-            email: $user->email()->value()
-        );
+        return UserResponseDTO::fromEntity($user);
     }    
 }
