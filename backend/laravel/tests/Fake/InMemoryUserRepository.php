@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Fake;
 
+use App\Application\Shared\Pagination\PaginatedResult;
 use App\Domain\User\Entity\User;
 use App\Domain\User\Repository\UserRepository;
 
@@ -31,5 +32,18 @@ final class InMemoryUserRepository implements UserRepository
     public function all(): array
     {
         return $this->users;
+    }
+
+    public function paginate(int $page, int $perPage): PaginatedResult
+    {
+        $offset = ($page - 1) * $perPage;
+        $items = array_slice($this->users, $offset, $perPage);
+        
+        return new PaginatedResult(
+            items: $items,
+            total: count($this->users),
+            page: $page,
+            perPage: $perPage
+        );
     }
 }

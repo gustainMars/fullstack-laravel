@@ -4,7 +4,9 @@ declare(strict_types= 1);
 
 namespace App\Http\Controllers\User;
 
+use Illuminate\Http\Request;
 use App\Application\User\ListUser\ListUserHandler;
+use App\Application\User\ListUser\ListUserQuery;
 use Illuminate\Http\JsonResponse;
 
 final class ListUserController
@@ -13,12 +15,17 @@ final class ListUserController
         private ListUserHandler $handler
     ) {}
 
-    public function __invoke(): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
-        $responseDto = $this->handler->handle();
+        $query = new ListUserQuery(
+            page: (int) $request->query('page'),
+            perPage: (int) $request->query('per_page'),
+        );
 
-        return response()->json([
-            'data' => $responseDto->toArray()
-        ]);
+        $responseDto = $this->handler->handle($query);
+
+        return response()->json(
+            $responseDto->toArray()
+        );
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types= 1);
 namespace App\Application\User\ListUser;
 
 use App\Application\User\DTO\UserListResponseDTO;
-use App\Application\User\DTO\UserResponseDTO;
 use App\Domain\User\Repository\UserRepository;
 
 final class ListUserHandler
@@ -14,15 +13,13 @@ final class ListUserHandler
         private UserRepository $repository
     ) {}
 
-    public function handle(): UserListResponseDTO
+    public function handle(ListUserQuery $query): UserListResponseDTO
     {
-        $users = $this->repository->all();
-
-        return new UserListResponseDTO(
-            array_map(
-                fn($user) => UserResponseDTO::fromEntity($user),
-                $users
-            )
+        $result = $this->repository->paginate(
+            $query->page,
+            $query->perPage
         );
+
+        return UserListResponseDTO::fromResult($result);
     }
 }

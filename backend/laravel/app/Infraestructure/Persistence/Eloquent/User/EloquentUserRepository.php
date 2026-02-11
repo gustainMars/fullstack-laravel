@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infraestructure\Persistence\Eloquent\User;
 
+use App\Application\Shared\Pagination\PaginatedResult;
 use App\Domain\User\Entity\User;
 Use App\Domain\User\Repository\UserRepository;
 use App\Domain\Shared\ValueObject\Email;
@@ -45,5 +46,36 @@ final class EloquentUserRepository implements UserRepository
                 email: new Email($model->email)
             ))
             ->all();
+    }
+
+    public function paginate(int $page, int $perPage): PaginatedResult
+    {
+        $paginator = UserModel::query()
+            ->orderBy('created_at', 'desc')
+            ->paginate(
+                perPage: $perPage,
+                page: $page
+            );
+
+        $entities = array_map(
+            fn (UserModel $model) => $this->toEntity($model),
+            $paginator->items()
+        );
+
+        return new PaginatedResult(
+            items: $entities,
+            total: $paginator->total(),
+            page: $paginator->currentPage(),
+            perPage: $paginator->perPage(),
+        );
+    }
+
+    private function toEntity(UserModel $model): User
+    {
+        return new User(
+            id: $model->id,
+            name: $model->name,
+            email: new Email($model->email),
+        );
     }
 }
